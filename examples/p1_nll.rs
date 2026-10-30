@@ -13,9 +13,8 @@ fn main() {
     }
     scores.retain(|&s| s != 1); // fine on both paths
 
-    for s in &scores {
-        if *s > 3 {
-            scores.push(s * 10); // the loop still borrows scores
-        }
-    }
+    // collect first: the borrow ends with collect, then extend may borrow mutably
+    let bigger: Vec<i32> = scores.iter().filter(|&&s| s > 3).map(|s| s * 10).collect();
+    scores.extend(bigger);
+    println!("scores = {scores:?}");
 }

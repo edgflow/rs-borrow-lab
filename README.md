@@ -8,10 +8,15 @@ Every example is a few dozen lines you can run, change and break. Each part of t
 of the video; some steps don't compile on purpose, to show the compiler's error.
 
 ```
-cargo run --example p1_moves
+cargo run --example p1_moves     # a move copies 24 bytes, never the heap buffer
+cargo run --example p1_drops     # who drops what, and when
+cargo run --example p1_shared    # Box and Rc
+cargo run --example p1_borrows   # shared XOR mutable, and the buffer that moves
+cargo run --example p1_nll       # a borrow lasts until its last use
 ```
 
 | Part | Topic | Tags |
 |---|---|---|
+| 1 | Ownership and the borrowing rules: moves, clones and Copy, drops, Box and Rc, shared XOR mutable, non-lexical lifetimes | `p1-step-0` … `p1-step-9` |
 
 MIT licensed.

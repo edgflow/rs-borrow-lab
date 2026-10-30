@@ -1,0 +1,10 @@
+[package]
+name = "borrow-lab"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "Advanced ownership and the borrow checker, one small example at a time"
+license = "MIT"
+
+[lib]
+name = "borrow_lab"

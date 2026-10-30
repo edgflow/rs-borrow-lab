@@ -11,7 +11,7 @@ impl<'src> Lexer<'src> {
     }
 
     /// The next word of the source, or None at the end.
-    fn next_token(&mut self) -> Option<&str> {
+    fn next_token(&mut self) -> Option<&'src str> {
         let rest = &self.src[self.pos..];
         let start = rest.find(|c: char| !c.is_whitespace())?;
         let rest = &rest[start..];
@@ -27,4 +27,10 @@ fn main() {
     let first = lexer.next_token();
     let second = lexer.next_token();
     println!("{first:?} {second:?}");
+
+    let mut tokens = vec![];
+    while let Some(token) = lexer.next_token() {
+        tokens.push(token); // each token borrows `source`, not `lexer`
+    }
+    println!("{tokens:?}");
 }

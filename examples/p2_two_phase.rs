@@ -5,7 +5,9 @@ fn main() {
     v.push(v.len()); // &mut v is only reserved here, and activated at the call
     println!("{v:?}");
 
-    let m = &mut v; // an explicit &mut is active at once
-    m.push(v.len()); // so reading v here conflicts with it
-    v.extend(v.iter()); // and here the shared borrow is still in use inside extend
+    let n = v.len(); // read first
+    let m = &mut v; // then borrow mutably
+    m.push(n);
+    v.extend_from_within(..); // copy from itself, inside one &mut borrow
+    println!("{v:?}");
 }

@@ -13,10 +13,15 @@ cargo run --example p1_drops     # who drops what, and when
 cargo run --example p1_shared    # Box and Rc
 cargo run --example p1_borrows   # shared XOR mutable, and the buffer that moves
 cargo run --example p1_nll       # a borrow lasts until its last use
+cargo run --example p2_split     # split_at_mut, get_disjoint_mut, chunks_mut
+cargo run --example p2_fields    # disjoint fields vs &mut self methods, closures
+cargo run --example p2_reborrow  # implicit and explicit reborrows
+cargo run --example p2_two_phase # v.push(v.len()) and where two-phase borrows stop
 ```
 
 | Part | Topic | Tags |
 |---|---|---|
 | 1 | Ownership and the borrowing rules: moves, clones and Copy, drops, Box and Rc, shared XOR mutable, non-lexical lifetimes | `p1-step-0` … `p1-step-9` |
+| 2 | Many &mut: E0499, split_at_mut, get_disjoint_mut, chunks_mut, disjoint fields, closures capturing fields, reborrows, two-phase borrows | `p2-step-0` … `p2-step-7` |
 
 MIT licensed.

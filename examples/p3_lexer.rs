@@ -32,5 +32,7 @@ fn main() {
     while let Some(token) = lexer.next_token() {
         tokens.push(token); // each token borrows `source`, not `lexer`
     }
+    drop(lexer); // fine: no token borrows the lexer
+    drop(source); // but every token borrows the source
     println!("{tokens:?}");
 }

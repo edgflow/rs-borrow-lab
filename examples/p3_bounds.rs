@@ -4,7 +4,7 @@ use std::fmt::Display;
 use std::thread;
 
 /// Returns `x`, but promises a reference that lives for 'b.
-fn pick<'a, 'b>(x: &'a str, _y: &'b str) -> &'b str {
+fn pick<'a: 'b, 'b>(x: &'a str, _y: &'b str) -> &'b str {
     x
 }
 
@@ -21,5 +21,7 @@ fn main() {
     }
 
     let local = String::from("a local string");
-    spawn_print(&local).join().unwrap();
+    spawn_print(local).join().unwrap(); // moved in: an owned String is 'static
+    spawn_print("a string literal").join().unwrap();
+    spawn_print(42).join().unwrap();
 }

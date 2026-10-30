@@ -17,11 +17,15 @@ cargo run --example p2_split     # split_at_mut, get_disjoint_mut, chunks_mut
 cargo run --example p2_fields    # disjoint fields vs &mut self methods, closures
 cargo run --example p2_reborrow  # implicit and explicit reborrows
 cargo run --example p2_two_phase # v.push(v.len()) and where two-phase borrows stop
+cargo run --example p3_return    # elision, E0106, 'a, E0597, E0515, &'static str
+cargo run --example p3_lexer     # a Lexer<'src> whose tokens borrow the source
+cargo run --example p3_bounds    # 'a: 'b and T: 'static
 ```
 
 | Part | Topic | Tags |
 |---|---|---|
 | 1 | Ownership and the borrowing rules: moves, clones and Copy, drops, Box and Rc, shared XOR mutable, non-lexical lifetimes | `p1-step-0` … `p1-step-9` |
 | 2 | Many &mut: E0499, split_at_mut, get_disjoint_mut, chunks_mut, disjoint fields, closures capturing fields, reborrows, two-phase borrows | `p2-step-0` … `p2-step-7` |
+| 3 | Lifetimes in signatures: elision, E0106, one lifetime for two inputs (E0597), two lifetimes, E0515 and owned results, a struct that borrows (Lexer<'src>, E0499, E0505), 'a: 'b, T: 'static | `p3-step-0` … `p3-step-10` |
 
 MIT licensed.

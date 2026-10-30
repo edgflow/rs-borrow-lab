@@ -8,9 +8,12 @@ fn longer<'a>(a: &'a str, b: &'a str) -> &'a str {
     if a.len() >= b.len() { a } else { b }
 }
 
-fn greeting(name: &str) -> &str {
-    let text = format!("hello, {name}");
-    &text
+fn greeting(name: &str) -> String {
+    format!("hello, {name}") // the caller owns the result
+}
+
+fn default_name() -> &'static str {
+    "guest" // a literal lives in the program itself
 }
 
 /// The result borrows from `a` only, so `b` may die first.
@@ -31,4 +34,5 @@ fn main() {
     println!("first_of: {result}");
 
     println!("{}", greeting("ana"));
+    println!("{}", greeting(default_name()));
 }

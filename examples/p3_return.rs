@@ -8,6 +8,11 @@ fn longer<'a>(a: &'a str, b: &'a str) -> &'a str {
     if a.len() >= b.len() { a } else { b }
 }
 
+fn greeting(name: &str) -> &str {
+    let text = format!("hello, {name}");
+    &text
+}
+
 /// The result borrows from `a` only, so `b` may die first.
 fn first_of<'a, 'b>(a: &'a str, _b: &'b str) -> &'a str {
     a
@@ -24,4 +29,6 @@ fn main() {
         result = first_of(&title, &subtitle); // tied to title alone
     } // subtitle is dropped here
     println!("first_of: {result}");
+
+    println!("{}", greeting("ana"));
 }

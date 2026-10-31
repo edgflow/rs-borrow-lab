@@ -1,5 +1,7 @@
 //! Helpers shared by the examples.
 
+pub mod my_box;
+
 /// A value with a name, that tells you when it is dropped.
 pub struct Noisy(pub &'static str);
 

@@ -1,5 +1,6 @@
 //! Helpers shared by the examples.
 
+pub mod arena;
 pub mod my_box;
 pub mod my_rc;
 

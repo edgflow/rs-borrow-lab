@@ -1,13 +1,13 @@
-//! Part 6: a tree of MyRc nodes: children owned by their parent, and a link back up.
+//! Part 6: a tree of MyRc nodes: children owned by their parent, and a MyWeak back up.
 
 use std::cell::RefCell;
 
 use borrow_lab::Noisy;
-use borrow_lab::my_rc::MyRc;
+use borrow_lab::my_rc::{MyRc, MyWeak};
 
 struct Node {
     name: Noisy,
-    parent: RefCell<Option<MyRc<Node>>>,
+    parent: RefCell<Option<MyWeak<Node>>>,
     children: RefCell<Vec<MyRc<Node>>>,
 }
 
@@ -23,8 +23,9 @@ fn main() {
     let root = node("root");
     let leaf = node("leaf");
     root.children.borrow_mut().push(leaf.clone()); // root owns leaf
-    *leaf.parent.borrow_mut() = Some(root.clone()); // and leaf owns root: a cycle
-    let parent = leaf.parent.borrow().as_ref().map(|p| p.name.0);
+    *leaf.parent.borrow_mut() = Some(MyRc::downgrade(&root)); // leaf only points back
+    let upgraded = leaf.parent.borrow().as_ref().and_then(|w| w.upgrade());
+    let parent = upgraded.map(|p| p.name.0);
     println!("leaf's parent: {}", parent.unwrap_or("none"));
     let (r, l) = (MyRc::strong_count(&root), MyRc::strong_count(&leaf));
     println!("root count: {r}, leaf count: {l}");

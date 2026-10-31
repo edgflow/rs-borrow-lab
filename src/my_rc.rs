@@ -1,12 +1,14 @@
-//! MyRc<T>: shared ownership with a reference count, like Rc<T>.
+//! MyRc<T> and MyWeak<T>: shared ownership with reference counts, like Rc<T> and Weak<T>.
 
+use std::alloc::{Layout, dealloc};
 use std::cell::Cell;
 use std::ops::Deref;
-use std::ptr::NonNull;
+use std::ptr::{self, NonNull};
 
-/// What lives on the heap: the count, next to the value.
+/// What lives on the heap: the two counts, next to the value.
 struct RcInner<T> {
     strong: Cell<usize>,
+    weak: Cell<usize>,
     value: T,
 }
 
@@ -15,10 +17,16 @@ pub struct MyRc<T> {
     ptr: NonNull<RcInner<T>>,
 }
 
+/// Points at a shared T without owning it: the T can be gone.
+pub struct MyWeak<T> {
+    ptr: NonNull<RcInner<T>>,
+}
+
 impl<T> MyRc<T> {
     pub fn new(value: T) -> MyRc<T> {
         let inner = Box::new(RcInner {
             strong: Cell::new(1),
+            weak: Cell::new(1), // one weak, held by all the strong owners together
             value,
         });
         MyRc {
@@ -30,8 +38,34 @@ impl<T> MyRc<T> {
         this.inner().strong.get()
     }
 
+    pub fn downgrade(this: &MyRc<T>) -> MyWeak<T> {
+        let weak = &this.inner().weak;
+        weak.set(weak.get() + 1);
+        MyWeak { ptr: this.ptr }
+    }
+
     fn inner(&self) -> &RcInner<T> {
         unsafe { self.ptr.as_ref() }
+    }
+}
+
+impl<T> MyWeak<T> {
+    pub fn upgrade(&self) -> Option<MyRc<T>> {
+        let strong = self.strong();
+        if strong.get() == 0 {
+            return None; // the value is already gone
+        }
+        strong.set(strong.get() + 1);
+        Some(MyRc { ptr: self.ptr })
+    }
+
+    // only the counts, never the whole RcInner: the value may be in the middle of its drop
+    fn strong(&self) -> &Cell<usize> {
+        unsafe { &(*self.ptr.as_ptr()).strong }
+    }
+
+    fn weak(&self) -> &Cell<usize> {
+        unsafe { &(*self.ptr.as_ptr()).weak }
     }
 }
 
@@ -55,8 +89,21 @@ impl<T> Drop for MyRc<T> {
     fn drop(&mut self) {
         let strong = &self.inner().strong;
         strong.set(strong.get() - 1);
-        if strong.get() == 0 {
-            unsafe { drop(Box::from_raw(self.ptr.as_ptr())) }; // the last owner frees it
+        if strong.get() > 0 {
+            return;
+        }
+        unsafe { ptr::drop_in_place(&raw mut (*self.ptr.as_ptr()).value) }; // the value
+        drop(MyWeak { ptr: self.ptr }); // then lets go of the weak the owners shared
+    }
+}
+
+impl<T> Drop for MyWeak<T> {
+    fn drop(&mut self) {
+        let weak = self.weak();
+        weak.set(weak.get() - 1);
+        if weak.get() == 0 {
+            let layout = Layout::new::<RcInner<T>>();
+            unsafe { dealloc(self.ptr.as_ptr() as *mut u8, layout) }; // nobody points here
         }
     }
 }

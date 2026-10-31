@@ -107,3 +107,37 @@ impl<T> Drop for MyWeak<T> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Counts its drops in a Cell that the test owns.
+    struct CountDrops<'a>(&'a Cell<usize>);
+
+    impl Drop for CountDrops<'_> {
+        fn drop(&mut self) {
+            self.0.set(self.0.get() + 1);
+        }
+    }
+
+    #[test]
+    fn the_last_owner_drops_the_value_once() {
+        let drops = Cell::new(0);
+        let a = MyRc::new(CountDrops(&drops));
+        let b = a.clone();
+        drop(a);
+        assert_eq!(drops.get(), 0);
+        drop(b);
+        assert_eq!(drops.get(), 1);
+    }
+
+    #[test]
+    fn a_weak_upgrades_only_while_the_value_lives() {
+        let a = MyRc::new(5);
+        let weak = MyRc::downgrade(&a);
+        assert_eq!(weak.upgrade().map(|r| *r), Some(5));
+        drop(a);
+        assert!(weak.upgrade().is_none());
+    }
+}

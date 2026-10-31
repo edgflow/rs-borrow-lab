@@ -41,3 +41,14 @@ impl<T> Drop for MyBox<T> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::MyBox;
+
+    #[test]
+    fn a_zero_sized_value() {
+        let unit = MyBox::new(());
+        assert_eq!(*unit, ());
+    }
+}

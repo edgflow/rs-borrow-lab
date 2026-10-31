@@ -23,6 +23,11 @@ cargo run --example p3_bounds    # 'a: 'b and T: 'static
 cargo run --example p4_variance  # covariance, and why &mut T and Cell<T> are invariant
 cargo run --example p4_hrtb      # for<'a>: closures that work for every lifetime
 cargo run --example p4_closures  # closures that return references, Box<dyn Fn(&str) -> &str>
+cargo run --example p5_temps     # temporaries, E0716, let x = &temporary
+cargo run --example p5_drop_order # locals, fields, tail expressions (Rust 2024)
+cargo run --example p5_match_lock # a MutexGuard that lives for a whole match
+cargo run --example p5_partial   # partial moves, E0509, mem::take
+cargo run --example p5_init      # E0381, MaybeUninit field by field
 ```
 
 | Part | Topic | Tags |
@@ -31,5 +36,6 @@ cargo run --example p4_closures  # closures that return references, Box<dyn Fn(&
 | 2 | Many &mut: E0499, split_at_mut, get_disjoint_mut, chunks_mut, disjoint fields, closures capturing fields, reborrows, two-phase borrows | `p2-step-0` … `p2-step-7` |
 | 3 | Lifetimes in signatures: elision, E0106, one lifetime for two inputs (E0597), two lifetimes, E0515 and owned results, a struct that borrows (Lexer<'src>, E0499, E0505), 'a: 'b, T: 'static | `p3-step-0` … `p3-step-10` |
 | 4 | Subtyping, variance and higher-ranked lifetimes: &'static T as &'a T, covariance of Vec, invariance of &mut T and Cell<T> (E0597), for<'a> (E0597, not general enough), closures returning references, Box<dyn Fn(&str) -> &str> | `p4-step-0` … `p4-step-8` |
+| 5 | Temporaries and drop order: E0716, lifetime extension, drop order of locals, fields and tail temporaries, a lock held by a match, partial moves (E0382), E0509 and mem::take, partial initialization (E0381) and MaybeUninit | `p5-step-0` … `p5-step-9` |
 
 MIT licensed.

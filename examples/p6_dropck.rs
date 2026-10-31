@@ -8,8 +8,7 @@ fn main() {
     std_box = Box::new(&text); // std's Box: accepted
     println!("{std_box}");
 
-    let (my_box, text2);
-    text2 = String::from("hello");
-    my_box = MyBox::new(&text2); // our MyBox: its Drop might read text2
+    let text2 = String::from("hello"); // declared first, dropped last
+    let my_box = MyBox::new(&text2); // dropped before text2: its Drop may read it
     println!("{}", *my_box);
 }

@@ -1,8 +1,8 @@
 //! MyBox<T>: a Box built by hand.
 
-use std::alloc::{Layout, alloc, handle_alloc_error};
+use std::alloc::{Layout, alloc, dealloc, handle_alloc_error};
 use std::ops::Deref;
-use std::ptr::NonNull;
+use std::ptr::{self, NonNull};
 
 /// Owns one T on the heap, like Box<T>.
 pub struct MyBox<T> {
@@ -24,5 +24,14 @@ impl<T> Deref for MyBox<T> {
 
     fn deref(&self) -> &T {
         unsafe { self.ptr.as_ref() } // a shared reference to the T on the heap
+    }
+}
+
+impl<T> Drop for MyBox<T> {
+    fn drop(&mut self) {
+        unsafe {
+            ptr::drop_in_place(self.ptr.as_ptr()); // drop the T first
+            dealloc(self.ptr.as_ptr() as *mut u8, Layout::new::<T>()); // then the memory
+        }
     }
 }

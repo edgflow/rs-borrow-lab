@@ -6,6 +6,17 @@ struct Person {
     age: u32,
 }
 
+/// A type with a destructor: its drop needs all of its fields.
+struct Ticket {
+    id: String,
+}
+
+impl Drop for Ticket {
+    fn drop(&mut self) {
+        println!("  drop ticket {:?}", self.id);
+    }
+}
+
 fn main() {
     let ana = Person {
         name: String::from("ana"),
@@ -13,5 +24,10 @@ fn main() {
     };
     let name = ana.name; // moves one field out
     println!("{name} is {}", ana.age); // the other field is still usable
-    println!("{ana:?}"); // but the whole struct is not
+
+    let ticket = Ticket {
+        id: String::from("T-1"),
+    };
+    let id = ticket.id; // move the id out of a Ticket
+    println!("took {id}");
 }

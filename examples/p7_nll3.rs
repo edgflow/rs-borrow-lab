@@ -1,13 +1,9 @@
-//! Part 7: NLL problem case #3: a borrow returned on one path only.
+//! Part 7: NLL problem case #3: a borrow returned on one path only; the entry API instead.
 
 use std::collections::HashMap;
 
 fn get_or_insert(map: &mut HashMap<u32, String>, key: u32) -> &String {
-    if let Some(value) = map.get(&key) {
-        return value; // this path returns the borrow
-    }
-    map.insert(key, format!("value {key}")); // map still counts as borrowed here
-    map.get(&key).unwrap()
+    map.entry(key).or_insert_with(|| format!("value {key}")) // one lookup, one borrow
 }
 
 fn main() {

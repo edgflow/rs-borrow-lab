@@ -12,4 +12,7 @@ where
 fn main() {
     println!("{}", measure(|s| s.len()));
     println!("{}", measure(|s| s.split(' ').count()));
+
+    let only_static = |s: &'static str| s.len(); // takes &'static str, nothing shorter
+    println!("{}", measure(only_static));
 }

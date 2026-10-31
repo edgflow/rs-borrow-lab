@@ -22,13 +22,13 @@ impl<'arena> Interner<'arena> {
 }
 
 /// Reads `name=value` pairs: values are slices of the source, names come from the interner.
-struct Parser<'a> {
-    rest: &'a str,
-    names: Interner<'a>,
+struct Parser<'src, 'arena> {
+    rest: &'src str,
+    names: Interner<'arena>,
 }
 
-impl<'a> Parser<'a> {
-    fn next_pair(&mut self) -> Option<(&'a str, &'a str)> {
+impl<'src, 'arena> Parser<'src, 'arena> {
+    fn next_pair(&mut self) -> Option<(&'arena str, &'src str)> {
         let (pair, rest) = self.rest.split_once(' ').unwrap_or((self.rest, ""));
         self.rest = rest;
         let (name, value) = pair.split_once('=')?;

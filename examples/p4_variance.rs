@@ -26,12 +26,12 @@ fn main() {
     mixed.push(&local); // so it can hold a shorter-lived word too
     println!("{mixed:?} {}", first(&mixed));
 
-    let mut forever: &'static str = "hello";
-    let shared: Cell<&'static str> = Cell::new("static");
+    let mut current: &str = "hello"; // no 'static: the compiler picks the lifetime
+    let shared: Cell<&str> = Cell::new("static");
     {
         let short = String::from("short-lived");
-        overwrite(&mut forever, &short);
+        overwrite(&mut current, &short);
         set(&shared, &short);
-    } // short is dropped here
-    println!("{forever} {}", shared.get());
+        println!("{current} {}", shared.get()); // used while short is alive
+    }
 }

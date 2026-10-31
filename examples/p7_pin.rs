@@ -34,5 +34,7 @@ fn main() {
     let mut b = a; // moves the Box, a pointer: the SelfRef stays where it is
     println!("after moving the box: {}", b.points_at_itself());
     let mut c = SelfRef::new("crab");
-    std::mem::swap(b.as_mut().get_mut(), c.as_mut().get_mut()); // would move both SelfRefs
+    std::mem::swap(&mut b, &mut c); // swaps the two boxes: pointers, not the SelfRefs
+    let (b_ok, c_ok) = (b.points_at_itself(), c.points_at_itself());
+    println!("after swapping the boxes: {b_ok} {c_ok}");
 }

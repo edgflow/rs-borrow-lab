@@ -31,6 +31,8 @@ impl SelfRef {
 fn main() {
     let a = SelfRef::new("ferris");
     println!("pinned: {}", a.points_at_itself());
-    let b = a; // moves the Box, a pointer: the SelfRef stays where it is
+    let mut b = a; // moves the Box, a pointer: the SelfRef stays where it is
     println!("after moving the box: {}", b.points_at_itself());
+    let mut c = SelfRef::new("crab");
+    std::mem::swap(b.as_mut().get_mut(), c.as_mut().get_mut()); // would move both SelfRefs
 }

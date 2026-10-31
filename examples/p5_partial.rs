@@ -25,9 +25,9 @@ fn main() {
     let name = ana.name; // moves one field out
     println!("{name} is {}", ana.age); // the other field is still usable
 
-    let ticket = Ticket {
+    let mut ticket = Ticket {
         id: String::from("T-1"),
     };
-    let id = ticket.id; // move the id out of a Ticket
+    let id = std::mem::take(&mut ticket.id); // take it, and leave an empty String behind
     println!("took {id}");
 }

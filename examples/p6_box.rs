@@ -5,6 +5,6 @@ use borrow_lab::my_box::MyBox;
 
 fn main() {
     let b = MyBox::new(Noisy("boxed"));
-    println!("inside: {}", b.0);
+    println!("inside: {}", b.0); // b.0 is (*b).0: through Deref
     println!("end of main");
 }

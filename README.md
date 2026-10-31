@@ -28,6 +28,11 @@ cargo run --example p5_drop_order # locals, fields, tail expressions (Rust 2024)
 cargo run --example p5_match_lock # a MutexGuard that lives for a whole match
 cargo run --example p5_partial   # partial moves, E0509, mem::take
 cargo run --example p5_init      # E0381, MaybeUninit field by field
+cargo run --example p6_box       # MyBox<T>: alloc, Deref, Drop, DerefMut, deref coercion
+cargo run --example p6_dropck    # drop check: Box vs MyBox (E0597)
+cargo run --example p6_rc        # MyRc<T>: a count next to the value
+cargo run --example p6_tree      # a cycle that leaks, and MyWeak
+cargo +nightly miri test --lib   # the tests, under Miri (rustup +nightly component add miri)
 ```
 
 | Part | Topic | Tags |
@@ -37,5 +42,6 @@ cargo run --example p5_init      # E0381, MaybeUninit field by field
 | 3 | Lifetimes in signatures: elision, E0106, one lifetime for two inputs (E0597), two lifetimes, E0515 and owned results, a struct that borrows (Lexer<'src>, E0499, E0505), 'a: 'b, T: 'static | `p3-step-0` … `p3-step-10` |
 | 4 | Subtyping, variance and higher-ranked lifetimes: &'static T as &'a T, covariance of Vec, invariance of &mut T and Cell<T> (E0597), for<'a> (E0597, not general enough), closures returning references, Box<dyn Fn(&str) -> &str> | `p4-step-0` … `p4-step-8` |
 | 5 | Temporaries and drop order: E0716, lifetime extension, drop order of locals, fields and tail temporaries, a lock held by a match, partial moves (E0382), E0509 and mem::take, partial initialization (E0381) and MaybeUninit | `p5-step-0` … `p5-step-9` |
+| 6 | Build your own smart pointer: MyBox<T> with alloc, Deref, Drop and DerefMut (E0609), deref coercion, drop check (E0597), MyRc<T> and MyWeak<T>, a cycle that leaks, tests under Miri (memory leaked, an allocation of size 0) | `p6-step-0` … `p6-step-10` |
 
 MIT licensed.

@@ -12,8 +12,12 @@ pub struct MyBox<T> {
 impl<T> MyBox<T> {
     pub fn new(value: T) -> MyBox<T> {
         let layout = Layout::new::<T>(); // the size and alignment of a T
-        let raw = unsafe { alloc(layout) } as *mut T;
-        let ptr = NonNull::new(raw).unwrap_or_else(|| handle_alloc_error(layout));
+        let ptr = if layout.size() == 0 {
+            NonNull::dangling() // a zero-sized T needs no memory: never alloc 0 bytes
+        } else {
+            let raw = unsafe { alloc(layout) } as *mut T;
+            NonNull::new(raw).unwrap_or_else(|| handle_alloc_error(layout))
+        };
         unsafe { ptr.as_ptr().write(value) }; // move the value into the heap
         MyBox { ptr }
     }
@@ -37,7 +41,10 @@ impl<T> Drop for MyBox<T> {
     fn drop(&mut self) {
         unsafe {
             ptr::drop_in_place(self.ptr.as_ptr()); // drop the T first
-            dealloc(self.ptr.as_ptr() as *mut u8, Layout::new::<T>()); // then the memory
+            let layout = Layout::new::<T>();
+            if layout.size() != 0 {
+                dealloc(self.ptr.as_ptr() as *mut u8, layout); // then the memory
+            }
         }
     }
 }

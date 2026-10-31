@@ -13,4 +13,10 @@ fn main() {
         }
         None => println!("empty"),
     }
+
+    let first = scores.lock().unwrap().first().copied(); // the guard dies at this ;
+    if let Some(first) = first {
+        let locked = scores.try_lock().is_err();
+        println!("first = {first}, locked after a let: {locked}");
+    }
 }

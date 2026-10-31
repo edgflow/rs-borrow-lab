@@ -6,6 +6,8 @@ fn main() {
     println!("length {}", Noisy("temp").0.len()); // the temporary dies at the ;
     println!("after the statement");
 
-    let text: &str = String::from("lifetimes").as_str(); // a temporary String
-    println!("{text}");
+    let extended = &Noisy("extended"); // & in a let: the temporary lives to the end of the block
+    let text = &String::from("lifetimes"); // the same: a &String that stays valid
+    println!("{} {text}", extended.0);
+    println!("end of main");
 }

@@ -1,4 +1,4 @@
-//! Part 7: an interner that hands out names from an arena.
+//! Part 7: a parser that borrows its source and interns names in an arena.
 
 use std::collections::HashSet;
 
@@ -21,14 +21,38 @@ impl<'arena> Interner<'arena> {
     }
 }
 
+/// Reads `name=value` pairs: values are slices of the source, names come from the interner.
+struct Parser<'a> {
+    rest: &'a str,
+    names: Interner<'a>,
+}
+
+impl<'a> Parser<'a> {
+    fn next_pair(&mut self) -> Option<(&'a str, &'a str)> {
+        let (pair, rest) = self.rest.split_once(' ').unwrap_or((self.rest, ""));
+        self.rest = rest;
+        let (name, value) = pair.split_once('=')?;
+        Some((self.names.intern(name), value))
+    }
+}
+
 fn main() {
     let arena = Arena::default();
-    let mut names = Interner {
-        arena: &arena,
-        names: HashSet::new(),
-    };
-    let a = names.intern("lang");
-    let b = names.intern("year");
-    let c = names.intern("lang"); // while a and b are still in use
-    println!("{a} {b} {c}, same pointer: {}", std::ptr::eq(a, c));
+    let mut names = Vec::new();
+    {
+        let source = String::from("lang=rust year=2015 lang=c");
+        let mut parser = Parser {
+            rest: &source,
+            names: Interner {
+                arena: &arena,
+                names: HashSet::new(),
+            },
+        };
+        while let Some((name, value)) = parser.next_pair() {
+            println!("{name} = {value}");
+            names.push(name); // keep the names
+        }
+    } // the source is gone here
+    println!("names: {names:?}");
+    println!("same pointer: {}", std::ptr::eq(names[0], names[2]));
 }

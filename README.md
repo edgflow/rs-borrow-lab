@@ -20,6 +20,9 @@ cargo run --example p2_two_phase # v.push(v.len()) and where two-phase borrows s
 cargo run --example p3_return    # elision, E0106, 'a, E0597, E0515, &'static str
 cargo run --example p3_lexer     # a Lexer<'src> whose tokens borrow the source
 cargo run --example p3_bounds    # 'a: 'b and T: 'static
+cargo run --example p4_variance  # covariance, and why &mut T and Cell<T> are invariant
+cargo run --example p4_hrtb      # for<'a>: closures that work for every lifetime
+cargo run --example p4_closures  # closures that return references, Box<dyn Fn(&str) -> &str>
 ```
 
 | Part | Topic | Tags |
@@ -27,5 +30,6 @@ cargo run --example p3_bounds    # 'a: 'b and T: 'static
 | 1 | Ownership and the borrowing rules: moves, clones and Copy, drops, Box and Rc, shared XOR mutable, non-lexical lifetimes | `p1-step-0` … `p1-step-9` |
 | 2 | Many &mut: E0499, split_at_mut, get_disjoint_mut, chunks_mut, disjoint fields, closures capturing fields, reborrows, two-phase borrows | `p2-step-0` … `p2-step-7` |
 | 3 | Lifetimes in signatures: elision, E0106, one lifetime for two inputs (E0597), two lifetimes, E0515 and owned results, a struct that borrows (Lexer<'src>, E0499, E0505), 'a: 'b, T: 'static | `p3-step-0` … `p3-step-10` |
+| 4 | Subtyping, variance and higher-ranked lifetimes: &'static T as &'a T, covariance of Vec, invariance of &mut T and Cell<T> (E0597), for<'a> (E0597, not general enough), closures returning references, Box<dyn Fn(&str) -> &str> | `p4-step-0` … `p4-step-8` |
 
 MIT licensed.
